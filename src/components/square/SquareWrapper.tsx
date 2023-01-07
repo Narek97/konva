@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { newAnnotationAtom } from "../../store/atom/newAnnotation.atom";
 import { useRecoilValue } from "recoil";
 import SquareShape from "./SquareShape";
-import { squareShapeState } from "../../store/atom/squareShape.atom";
+import { squareShapeAtom } from "../../store/atom/squareShape.atom";
 
 interface ISquareWrapper {
   currentShape: string | null;
@@ -11,7 +11,7 @@ interface ISquareWrapper {
 
 const SquareWrapper: FC<ISquareWrapper> = ({ currentShape, onShapeSelect }) => {
   const annotation = useRecoilValue(newAnnotationAtom);
-  const squareShape = useRecoilValue(squareShapeState);
+  const squareShape = useRecoilValue(squareShapeAtom);
   const squares =
     currentShape === "square" ? [...annotation, ...squareShape] : squareShape;
 

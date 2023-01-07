@@ -1,25 +1,25 @@
 import React, { FC, useRef } from "react";
-import { KonvaNodeComponent, Rect } from "react-konva";
+import { Ellipse, KonvaNodeComponent } from "react-konva";
 import Konva from "konva";
-import TRect = Konva.Rect;
+import TEllipse = Konva.Ellipse;
 
-interface ISquareShape {
+interface IEllipseShape {
   shapeProps: any;
   onSelect: (e: any) => void;
 }
 
-const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
-  const shapeRef = useRef<KonvaNodeComponent<TRect>>(null);
+const EllipseShape: FC<IEllipseShape> = ({ onSelect, shapeProps }) => {
+  const shapeRef = useRef<KonvaNodeComponent<TEllipse>>(null);
 
   return (
-    <Rect
+    <Ellipse
       onClick={() => onSelect(shapeRef)}
       onTap={() => onSelect(shapeRef)}
       // ref={shapeRef.current[getKey]}
       ref={shapeRef}
       {...shapeProps}
       dash={[10, 10]}
-      name="square"
+      name="ellipse"
       draggable
       // onDragEnd={(e) => {
       //   onChange({
@@ -48,4 +48,4 @@ const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
   );
 };
 
-export default SquareShape;
+export default EllipseShape;

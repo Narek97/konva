@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const squareShapeState = atom({
-  key: "squareShapeState",
+export const squareShapeAtom = atom({
+  key: "squareShapeAtom",
   default: [] as any,
 });

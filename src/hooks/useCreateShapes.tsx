@@ -1,7 +1,8 @@
 import React from "react";
 import { useRecoilState } from "recoil";
-import { squareShapeState } from "../store/atom/squareShape.atom";
-import { triangleShapeState } from "../store/atom/triangleShapeState";
+import { squareShapeAtom } from "../store/atom/squareShape.atom";
+import { triangleShapeAtom } from "../store/atom/triangleShape.atom";
+import { ellipseShapeAtom } from "../store/atom/ellipseShape.atom";
 
 interface IUseCreateShapes {
   sx: number;
@@ -11,9 +12,10 @@ interface IUseCreateShapes {
 }
 
 const useCreateShapes = () => {
-  const [squareShape, setSquareShapeState] = useRecoilState(squareShapeState);
+  const [squareShape, setSquareShapeState] = useRecoilState(squareShapeAtom);
   const [triangleShape, setTriangleShapeState] =
-    useRecoilState(triangleShapeState);
+    useRecoilState(triangleShapeAtom);
+  const [ellipseShape, setEllipseShape] = useRecoilState(ellipseShapeAtom);
 
   const createRect = ({ sx, sy, x, y }: IUseCreateShapes) => {
     const annotation = {
@@ -45,7 +47,23 @@ const useCreateShapes = () => {
     setTriangleShapeState([...triangleShape, annotation]);
   };
 
-  return { createRect, createTriangle };
+  const createEllipse = ({ sx, sy, x, y }: IUseCreateShapes) => {
+    const annotation = {
+      x: sx,
+      y: sy,
+      width: x - sx,
+      height: y - sy,
+      radiusX: Math.abs(x - sx),
+      radiusY: Math.abs(y - sy),
+      key: ellipseShape.length + 1,
+      fill: "red",
+      strokeWidth: 0,
+      id: new Date().toLocaleTimeString().toString(),
+    };
+    setEllipseShape([...ellipseShape, annotation]);
+  };
+
+  return { createRect, createTriangle, createEllipse };
 };
 
 export default useCreateShapes;

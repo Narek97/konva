@@ -7,6 +7,7 @@ import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 import SquareWrapper from "./components/square/SquareWrapper";
 import useCreateShapes from "./hooks/useCreateShapes";
 import TriangleWrapper from "./components/triangle/TriangleWrapper";
+import EllipseShapeWrapper from "./components/ellipse/EllipseWrapper";
 
 declare global {
   interface Window {
@@ -19,7 +20,7 @@ const App = () => {
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
-  const { createRect, createTriangle } = useCreateShapes();
+  const { createRect, createTriangle, createEllipse } = useCreateShapes();
 
   const trRef = useRef<any>(null);
   const selectionRectRef = useRef<any>(null);
@@ -122,6 +123,9 @@ const App = () => {
       if (currentShape === "triangle") {
         createTriangle({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
+      if (currentShape === "ellipse") {
+        createEllipse({ sx, sy, x: pos?.x!, y: pos?.y! });
+      }
 
       // setCurrentShape(null);
       // setSelectIcon(null);
@@ -209,6 +213,10 @@ const App = () => {
               onShapeSelect={onShapeSelect}
             />
             <TriangleWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
+            <EllipseShapeWrapper
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />

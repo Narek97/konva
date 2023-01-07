@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
 export const newAnnotationAtom = atom({
-  key: "newAnnotation",
+  key: "newAnnotationAtom",
   default: [] as any,
 });

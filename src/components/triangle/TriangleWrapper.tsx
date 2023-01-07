@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { newAnnotationAtom } from "../../store/atom/newAnnotation.atom";
 import { useRecoilValue } from "recoil";
 import TriangleShape from "./TriangleShape";
-import { triangleShapeState } from "../../store/atom/triangleShapeState";
+import { triangleShapeAtom } from "../../store/atom/triangleShape.atom";
 
 interface ITriangleWrapper {
   currentShape: string | null;
@@ -14,7 +14,7 @@ const TriangleWrapper: FC<ITriangleWrapper> = ({
   onShapeSelect,
 }) => {
   const annotation = useRecoilValue(newAnnotationAtom);
-  const triangleShape = useRecoilValue(triangleShapeState);
+  const triangleShape = useRecoilValue(triangleShapeAtom);
   const triangles =
     currentShape === "triangle"
       ? [...annotation, ...triangleShape]
