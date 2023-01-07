@@ -114,6 +114,7 @@ const useCreateShapes = () => {
     const annotation = {
       arrowStartPos,
       arrowEndPos,
+      id: Date.now().toString(),
     };
     setArrowSquare([...arrowSquare, annotation]);
   };

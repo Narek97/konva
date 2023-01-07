@@ -82,7 +82,7 @@ const App = () => {
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
-    if (currentShape === "arrow") {
+    if (currentShape === "arrow" && e.target.attrs.id === "stage") {
       setNewAnnotation([
         {
           isDrawing: true,
