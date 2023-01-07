@@ -1,7 +1,9 @@
-import React, { LegacyRef, MouseEvent, useRef, useState } from "react";
+import React, { MouseEvent, useRef, useState } from "react";
 import { Layer, Rect, Stage, Transformer } from "react-konva";
 import Konva from "konva";
 import Paint from "../src/assests/paint.svg";
+import { useRecoilState } from "recoil";
+import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 
 declare global {
   interface Window {
@@ -13,6 +15,7 @@ const App = () => {
   const layerRef = useRef<any>(null);
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
+  const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
 
   const trRef = useRef<any>(null);
   const selectionRectRef = useRef<any>(null);
@@ -30,13 +33,16 @@ const App = () => {
     y2: 0,
   });
 
-  const onAddShape = (shape: string, src?: string) => {
-    setCurrentShape(shape);
+  const onAddShape = (shape: string) => {
+    trRef.current.nodes([]);
+    setNewAnnotation([]);
+    setCurrentShape((prev) => (prev === shape ? null : shape));
     setSelectIcon(null);
   };
 
   const onAddIcon = (event: MouseEvent<HTMLImageElement>) => {
-    setSelectIcon((event.target as HTMLImageElement).src);
+    const src = (event.target as HTMLImageElement).src;
+    setSelectIcon((prev) => (prev === src ? null : src));
     setCurrentShape(null);
   };
 
@@ -55,6 +61,17 @@ const App = () => {
 
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
+
+    if (e.target.attrs.id !== "stage") {
+    }
+
+    if (currentShape && !newAnnotation.length) {
+      setNewAnnotation([
+        { x: pos?.x, y: pos?.y, width: 0, height: 0, key: "0" },
+      ]);
+      return;
+    }
+
     selection.current.visible = true;
     selection.current.x1 = pos?.x || 0;
     selection.current.y1 = pos?.y || 0;
@@ -64,6 +81,23 @@ const App = () => {
   };
 
   const onMouseMove = (e: Konva.KonvaEventObject<any>) => {
+    if (currentShape && newAnnotation.length) {
+      const sx = newAnnotation[0].x;
+      const sy = newAnnotation[0].y;
+      const pos = e.target.getStage()?.getPointerPosition();
+
+      setNewAnnotation([
+        {
+          x: sx,
+          y: sy,
+          width: pos?.x || 0 - sx,
+          height: pos?.y || 0 - sy,
+          key: "0",
+        },
+      ]);
+      return;
+    }
+
     const pos = e.target.getStage()?.getPointerPosition();
     selection.current.x2 = pos?.x || 0;
     selection.current.y2 = pos?.y || 0;
@@ -71,6 +105,13 @@ const App = () => {
   };
 
   const onMouseUp = () => {
+    if (newAnnotation.length) {
+      setCurrentShape(null);
+      setSelectIcon(null);
+      setNewAnnotation([]);
+      return;
+    }
+
     if (!selection.current.visible) {
       return;
     }
