@@ -10,6 +10,7 @@ import TriangleWrapper from "./components/triangle/TriangleWrapper";
 import EllipseWrapper from "./components/ellipse/EllipseWrapper";
 import StarWrapper from "./components/star/StarWrapper";
 import RoundSquareWrapper from "./components/roundSquare/roundSquareWrapper";
+import ArrowWrapper from "./components/arrow/ArrowWrapper";
 
 declare global {
   interface Window {
@@ -32,6 +33,7 @@ const App = () => {
     createEllipse,
     createStar,
     createRoundRect,
+    createArrow,
   } = useCreateShapes();
 
   const trRef = useRef<any>(null);
@@ -80,6 +82,17 @@ const App = () => {
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
+    if (currentShape === "arrow") {
+      setNewAnnotation([
+        {
+          isDrawing: true,
+          arrowStartPos: { x: pos?.x, y: pos?.y },
+          arrowEndPos: { x: pos?.x, y: pos?.y },
+        },
+      ]);
+      return;
+    }
+
     if (
       currentShape &&
       !newAnnotation.length &&
@@ -109,6 +122,13 @@ const App = () => {
   const onMouseMove = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
+    if (currentShape === "arrow" && newAnnotation[0]?.isDrawing) {
+      setNewAnnotation([
+        { ...newAnnotation[0], arrowEndPos: { x: pos?.x, y: pos?.y } },
+      ]);
+      return;
+    }
+
     if (currentShape && newAnnotation.length) {
       const sx = newAnnotation[0].x;
       const sy = newAnnotation[0].y;
@@ -137,7 +157,6 @@ const App = () => {
     if (!selection.current.visible) {
       return;
     }
-
     selection.current.x2 = pos?.x!;
     selection.current.y2 = pos?.y!;
     updateSelectionRect();
@@ -164,7 +183,12 @@ const App = () => {
       if (currentShape === "roundSquare") {
         createRoundRect({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
-
+      if (currentShape === "arrow") {
+        createArrow({
+          arrowStartPos: newAnnotation[0].arrowStartPos,
+          arrowEndPos: newAnnotation[0].arrowEndPos,
+        });
+      }
       // setCurrentShape(null);
       // setSelectIcon(null);
       setNewAnnotation([]);
@@ -228,13 +252,13 @@ const App = () => {
         <button onClick={() => onAddShape("ellipse")}>Ellipse</button>
         <button onClick={() => onAddShape("star")}>Star</button>
         <button onClick={() => onAddShape("roundSquare")}>Round Square</button>
+        <button onClick={() => onAddShape("arrow")}>Arrow</button>
         <img
           alt={"cooling"}
           src={Paint}
           width="25"
           onClick={(e) => onAddIcon(e, true)}
         />
-        <button onClick={() => onAddShape("arrow")}>Arrow</button>
       </div>
       <div>
         <Stage
@@ -290,6 +314,10 @@ const App = () => {
               onShapeSelect={onShapeSelect}
             />
             <RoundSquareWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
+            <ArrowWrapper
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />

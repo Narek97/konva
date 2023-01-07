@@ -5,12 +5,18 @@ import { triangleShapeAtom } from "../store/atom/triangleShape.atom";
 import { ellipseShapeAtom } from "../store/atom/ellipseShape.atom";
 import { starShapeAtom } from "../store/atom/starShape.atom";
 import { roundSquareShapeAtom } from "../store/atom/roundSquareShape.atom";
+import { arrowShapeAtom } from "../store/atom/arrowShape.atom";
 
 interface IUseCreateShapes {
   sx: number;
   sy: number;
   x: number;
   y: number;
+}
+
+interface IUseCreateArrowShapes {
+  arrowStartPos: any;
+  arrowEndPos: any;
 }
 
 const useCreateShapes = () => {
@@ -20,6 +26,7 @@ const useCreateShapes = () => {
   const [ellipseShape, setEllipseShape] = useRecoilState(ellipseShapeAtom);
   const [starShape, setStarShape] = useRecoilState(starShapeAtom);
   const [roundSquare, setRoundSquare] = useRecoilState(roundSquareShapeAtom);
+  const [arrowSquare, setArrowSquare] = useRecoilState(arrowShapeAtom);
 
   const createRect = ({ sx, sy, x, y }: IUseCreateShapes) => {
     const annotation = {
@@ -100,12 +107,24 @@ const useCreateShapes = () => {
     setRoundSquare([...roundSquare, annotation]);
   };
 
+  const createArrow = ({
+    arrowStartPos,
+    arrowEndPos,
+  }: IUseCreateArrowShapes) => {
+    const annotation = {
+      arrowStartPos,
+      arrowEndPos,
+    };
+    setArrowSquare([...arrowSquare, annotation]);
+  };
+
   return {
     createRect,
     createTriangle,
     createEllipse,
     createStar,
     createRoundRect,
+    createArrow,
   };
 };
 
