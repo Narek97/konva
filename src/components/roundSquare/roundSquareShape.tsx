@@ -1,25 +1,25 @@
 import React, { FC, useRef } from "react";
-import { KonvaNodeComponent, Star } from "react-konva";
+import { KonvaNodeComponent, Rect } from "react-konva";
 import Konva from "konva";
-import TStar = Konva.Star;
+import TRect = Konva.Rect;
 
-interface IStarShape {
+interface ISquareShape {
   shapeProps: any;
   onSelect: (e: any) => void;
 }
 
-const StarShape: FC<IStarShape> = ({ onSelect, shapeProps }) => {
-  const shapeRef = useRef<KonvaNodeComponent<TStar>>(null);
+const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
+  const shapeRef = useRef<KonvaNodeComponent<TRect>>(null);
 
   return (
-    <Star
+    <Rect
       onClick={() => onSelect(shapeRef)}
       onTap={() => onSelect(shapeRef)}
       // ref={shapeRef.current[getKey]}
       ref={shapeRef}
       {...shapeProps}
       dash={[10, 10]}
-      name="star"
+      name="roundSquare"
       draggable
       // onDragEnd={(e) => {
       //   onChange({
@@ -48,4 +48,4 @@ const StarShape: FC<IStarShape> = ({ onSelect, shapeProps }) => {
   );
 };
 
-export default StarShape;
+export default SquareShape;

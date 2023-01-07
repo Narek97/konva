@@ -9,6 +9,7 @@ import useCreateShapes from "./hooks/useCreateShapes";
 import TriangleWrapper from "./components/triangle/TriangleWrapper";
 import EllipseWrapper from "./components/ellipse/EllipseWrapper";
 import StarWrapper from "./components/star/StarWrapper";
+import RoundSquareWrapper from "./components/roundSquare/roundSquareWrapper";
 
 declare global {
   interface Window {
@@ -21,8 +22,13 @@ const App = () => {
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
-  const { createRect, createTriangle, createEllipse, createStar } =
-    useCreateShapes();
+  const {
+    createRect,
+    createTriangle,
+    createEllipse,
+    createStar,
+    createRoundRect,
+  } = useCreateShapes();
 
   const trRef = useRef<any>(null);
   const selectionRectRef = useRef<any>(null);
@@ -69,7 +75,11 @@ const App = () => {
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
-    if (currentShape && !newAnnotation.length) {
+    if (
+      currentShape &&
+      !newAnnotation.length &&
+      e.target.attrs.id === "stage"
+    ) {
       setNewAnnotation([
         { x: pos?.x, y: pos?.y, width: 0, height: 0, key: "0" },
       ]);
@@ -130,6 +140,9 @@ const App = () => {
       }
       if (currentShape === "star") {
         createStar({ sx, sy, x: pos?.x!, y: pos?.y! });
+      }
+      if (currentShape === "roundSquare") {
+        createRoundRect({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
 
       // setCurrentShape(null);
@@ -226,6 +239,10 @@ const App = () => {
               onShapeSelect={onShapeSelect}
             />
             <StarWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
+            <RoundSquareWrapper
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />

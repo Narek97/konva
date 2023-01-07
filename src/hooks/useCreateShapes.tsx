@@ -4,6 +4,7 @@ import { squareShapeAtom } from "../store/atom/squareShape.atom";
 import { triangleShapeAtom } from "../store/atom/triangleShape.atom";
 import { ellipseShapeAtom } from "../store/atom/ellipseShape.atom";
 import { starShapeAtom } from "../store/atom/starShape.atom";
+import { roundSquareShapeAtom } from "../store/atom/roundSquareShape.atom";
 
 interface IUseCreateShapes {
   sx: number;
@@ -18,6 +19,7 @@ const useCreateShapes = () => {
     useRecoilState(triangleShapeAtom);
   const [ellipseShape, setEllipseShape] = useRecoilState(ellipseShapeAtom);
   const [starShape, setStarShape] = useRecoilState(starShapeAtom);
+  const [roundSquare, setRoundSquare] = useRecoilState(roundSquareShapeAtom);
 
   const createRect = ({ sx, sy, x, y }: IUseCreateShapes) => {
     const annotation = {
@@ -79,7 +81,32 @@ const useCreateShapes = () => {
     setStarShape([...starShape, annotation]);
   };
 
-  return { createRect, createTriangle, createEllipse, createStar };
+  const createRoundRect = ({ sx, sy, x, y }: IUseCreateShapes) => {
+    const annotation = {
+      x: sx,
+      y: sy,
+      width: x - sx,
+      height: y - sy,
+      numPoints: 5,
+      innerRadius: x - sx,
+      outerRadius: x - sx / 2,
+      rotation: x - sx > 0 ? -180 : 0,
+      key: roundSquare.length + 1,
+      fill: "purple",
+      strokeWidth: 0,
+      cornerRadius: 10,
+      id: Date.now().toString(),
+    };
+    setRoundSquare([...roundSquare, annotation]);
+  };
+
+  return {
+    createRect,
+    createTriangle,
+    createEllipse,
+    createStar,
+    createRoundRect,
+  };
 };
 
 export default useCreateShapes;
