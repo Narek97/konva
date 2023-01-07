@@ -82,16 +82,16 @@ const App = () => {
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
-    if (currentShape === "arrow" && e.target.attrs.id === "stage") {
-      setNewAnnotation([
-        {
-          isDrawing: true,
-          arrowStartPos: { x: pos?.x, y: pos?.y },
-          arrowEndPos: { x: pos?.x, y: pos?.y },
-        },
-      ]);
-      return;
-    }
+    // if (currentShape === "arrow" && e.target.attrs.id === "stage") {
+    //   setNewAnnotation([
+    //     {
+    //       isDrawing: true,
+    //       arrowStartPos: { x: pos?.x, y: pos?.y },
+    //       arrowEndPos: { x: pos?.x, y: pos?.y },
+    //     },
+    //   ]);
+    //   return;
+    // }
 
     if (
       currentShape &&
@@ -122,12 +122,12 @@ const App = () => {
   const onMouseMove = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
-    if (currentShape === "arrow" && newAnnotation[0]?.isDrawing) {
-      setNewAnnotation([
-        { ...newAnnotation[0], arrowEndPos: { x: pos?.x, y: pos?.y } },
-      ]);
-      return;
-    }
+    // if (currentShape === "arrow" && newAnnotation[0]?.isDrawing) {
+    //   setNewAnnotation([
+    //     { ...newAnnotation[0], arrowEndPos: { x: pos?.x, y: pos?.y } },
+    //   ]);
+    //   return;
+    // }
 
     if (currentShape && newAnnotation.length) {
       const sx = newAnnotation[0].x;
@@ -183,12 +183,16 @@ const App = () => {
       if (currentShape === "roundSquare") {
         createRoundRect({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
+
       if (currentShape === "arrow") {
-        createArrow({
-          arrowStartPos: newAnnotation[0].arrowStartPos,
-          arrowEndPos: newAnnotation[0].arrowEndPos,
-        });
+        createArrow({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
+      // if (currentShape === "arrow") {
+      //   createArrow({
+      //     arrowStartPos: newAnnotation[0].arrowStartPos,
+      //     arrowEndPos: newAnnotation[0].arrowEndPos,
+      //   });
+      // }
       // setCurrentShape(null);
       // setSelectIcon(null);
       setNewAnnotation([]);

@@ -48,7 +48,7 @@ const useCreateShapes = () => {
       y: sy,
       width: x - sx,
       height: y - sy,
-      points: [0, 0, x - sx / 2, y - sy, x - sx, 0],
+      // points: [0, 0, x - sx / 2, y - sy, x - sx, 0],
       closed: true,
       key: triangleShape.length + 1,
       fill: "blue",
@@ -107,17 +107,32 @@ const useCreateShapes = () => {
     setRoundSquare([...roundSquare, annotation]);
   };
 
-  const createArrow = ({
-    arrowStartPos,
-    arrowEndPos,
-  }: IUseCreateArrowShapes) => {
+  const createArrow = ({ sx, sy, x, y }: IUseCreateShapes) => {
     const annotation = {
-      arrowStartPos,
-      arrowEndPos,
+      x: sx,
+      y: sy,
+      width: x - sx,
+      height: y - sy,
+      // points: [0, 0, x - sx, y - sy],
+      key: arrowSquare.length + 1,
+      fill: "blue",
+      strokeWidth: 0,
       id: Date.now().toString(),
     };
     setArrowSquare([...arrowSquare, annotation]);
   };
+
+  // const createArrow = ({
+  //   arrowStartPos,
+  //   arrowEndPos,
+  // }: IUseCreateArrowShapes) => {
+  //   const annotation = {
+  //     arrowStartPos,
+  //     arrowEndPos,
+  //     id: Date.now().toString(),
+  //   };
+  //   setArrowSquare([...arrowSquare, annotation]);
+  // };
 
   return {
     createRect,

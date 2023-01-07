@@ -20,7 +20,17 @@ const ArrowWrapper: FC<IArrowWrapper> = ({ currentShape, onShapeSelect }) => {
       {arrows.map((arrow: any, index: number) => (
         <ArrowShape
           key={arrow?.id || index}
-          shapeProps={arrow}
+          shapeProps={{
+            // ...arrow,
+            id: arrow.id,
+            x: arrow.x,
+            y: arrow.y,
+            x1: arrow.width,
+            y1: arrow.height,
+            points: [0, 0, arrow.width, arrow.height],
+            // closed: true,
+            stroke: "black",
+          }}
           onSelect={onShapeSelect}
         />
       ))}

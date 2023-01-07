@@ -9,18 +9,33 @@ interface IArrowShape {
 }
 
 const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
-  const { arrowStartPos, arrowEndPos, id } = shapeProps;
   const [isShowCircle, setIsShowCircle] = useState(false);
   const [arrows, setArrows] = useRecoilState(arrowShapeAtom);
 
-  const onCircleDrag = (e: any, arrowPos: string) => {
+  const onCircleFromDrag = (e: any) => {
     let newArrows = arrows.map((item: any) => {
-      if (item.id === id) {
+      if (item.id === shapeProps.id) {
         return {
           ...item,
-          [arrowPos]: {
-            ...e.target.position(),
-          },
+          x: e.target.x(),
+          y: e.target.y(),
+          width: shapeProps.x1 + shapeProps.x - e.target.x(),
+
+          height: shapeProps.y1 + shapeProps.y - e.target.y(),
+        };
+      }
+      return item;
+    });
+    setArrows(newArrows);
+  };
+
+  const onCircleToDrag = (e: any) => {
+    let newArrows = arrows.map((item: any) => {
+      if (item.id === shapeProps.id) {
+        return {
+          ...item,
+          width: e.target.x() - shapeProps.x,
+          height: e.target.y() - shapeProps.y,
         };
       }
       return item;
@@ -29,18 +44,13 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
   };
 
   const onArrowDrag = (e: any) => {
+    setIsShowCircle(false);
     let newArrows = arrows.map((item: any) => {
-      if (item.id === id) {
+      if (item.id === shapeProps.id) {
         return {
           ...item,
-          arrowStartPos: {
-            x: arrowStartPos.x + e.target.x(),
-            y: arrowStartPos.y + e.target.y(),
-          },
-          arrowEndPos: {
-            x: arrowEndPos.x + e.target.x(),
-            y: arrowEndPos.y + e.target.y(),
-          },
+          x: e.target.x(),
+          y: e.target.y(),
         };
       }
       return item;
@@ -54,18 +64,11 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
         onClick={onSelect}
         onTap={onSelect}
         onMouseDown={() => setIsShowCircle(true)}
-        // onMouseMove={() => setIsShowCircle(false)}
-        points={[
-          arrowStartPos.x,
-          arrowStartPos.y,
-          // (arrowStartPos.x + arrowEndPos.x) / 2,
-          // (arrowStartPos.y + arrowEndPos.y) / 2,
-          arrowEndPos.x,
-          arrowEndPos.y,
-        ]}
-        onDragEnd={onArrowDrag}
+        {...shapeProps}
+        onDragMove={onArrowDrag}
         pointerLength={20}
         pointerWidth={20}
+        curved
         lineCap="square"
         lineJoin="round"
         fill="black"
@@ -76,26 +79,28 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
       {isShowCircle && (
         <Circle
           id="from"
-          {...shapeProps?.arrowStartPos}
           fill="blue"
           width={10}
           height={10}
+          x={shapeProps.x}
+          y={shapeProps.y}
           draggable
           onMouseUp={() => setIsShowCircle(false)}
-          onDragMove={(e) => onCircleDrag(e, "arrowStartPos")}
+          onDragMove={onCircleFromDrag}
         />
       )}
 
       {isShowCircle && (
         <Circle
           id="to"
-          {...shapeProps?.arrowEndPos}
           fill="blue"
           width={10}
           height={10}
+          x={shapeProps.x + shapeProps.x1}
+          y={shapeProps.y + shapeProps.y1}
           draggable
           onMouseUp={() => setIsShowCircle(false)}
-          onDragMove={(e) => onCircleDrag(e, "arrowEndPos")}
+          onDragMove={onCircleToDrag}
         />
       )}
     </>
