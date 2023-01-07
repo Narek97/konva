@@ -1,9 +1,11 @@
-import React, { MouseEvent, useRef, useState } from "react";
+import React, { MouseEvent, useCallback, useRef, useState } from "react";
 import { Layer, Rect, Stage, Transformer } from "react-konva";
 import Konva from "konva";
 import Paint from "../src/assests/paint.svg";
 import { useRecoilState } from "recoil";
 import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
+import SquareWrapper from "./components/square/SquareWrapper";
+import useCreateShapes from "./hooks/useCreateShapes";
 
 declare global {
   interface Window {
@@ -16,6 +18,7 @@ const App = () => {
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
+  const { createRect } = useCreateShapes();
 
   const trRef = useRef<any>(null);
   const selectionRectRef = useRef<any>(null);
@@ -62,22 +65,20 @@ const App = () => {
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
-    if (e.target.attrs.id !== "stage") {
-    }
-
     if (currentShape && !newAnnotation.length) {
       setNewAnnotation([
         { x: pos?.x, y: pos?.y, width: 0, height: 0, key: "0" },
       ]);
       return;
     }
-
-    selection.current.visible = true;
-    selection.current.x1 = pos?.x || 0;
-    selection.current.y1 = pos?.y || 0;
-    selection.current.x2 = pos?.x || 0;
-    selection.current.y2 = pos?.y || 0;
-    updateSelectionRect();
+    if (e.target.attrs.id === "stage") {
+      selection.current.visible = true;
+      selection.current.x1 = pos?.x!;
+      selection.current.y1 = pos?.y!;
+      selection.current.x2 = pos?.x!;
+      selection.current.y2 = pos?.y!;
+      updateSelectionRect();
+    }
   };
 
   const onMouseMove = (e: Konva.KonvaEventObject<any>) => {
@@ -90,24 +91,36 @@ const App = () => {
         {
           x: sx,
           y: sy,
-          width: pos?.x || 0 - sx,
-          height: pos?.y || 0 - sy,
+          width: pos?.x! - sx,
+          height: pos?.y! - sy,
           key: "0",
         },
       ]);
       return;
     }
 
+    if (!selection.current.visible) {
+      return;
+    }
+
     const pos = e.target.getStage()?.getPointerPosition();
-    selection.current.x2 = pos?.x || 0;
-    selection.current.y2 = pos?.y || 0;
+    selection.current.x2 = pos?.x!;
+    selection.current.y2 = pos?.y!;
     updateSelectionRect();
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (e: Konva.KonvaEventObject<any>) => {
     if (newAnnotation.length) {
-      setCurrentShape(null);
-      setSelectIcon(null);
+      const sx = newAnnotation[0].x;
+      const sy = newAnnotation[0].y;
+      const pos = e.target.getStage()?.getPointerPosition();
+
+      if (currentShape === "square") {
+        createRect({ sx, sy, x: pos?.x!, y: pos?.y! });
+      }
+
+      // setCurrentShape(null);
+      // setSelectIcon(null);
       setNewAnnotation([]);
       return;
     }
@@ -144,6 +157,15 @@ const App = () => {
     }
   };
 
+  const onShapeSelect = useCallback((e: any) => {
+    if (e.current) {
+      trRef.current.nodes([e.current]);
+      trRef.current.getLayer().batchDraw();
+    }
+
+    setCurrentShape(null);
+  }, []);
+
   return (
     <div className={"app"}>
       <div className={"header"}>
@@ -178,6 +200,11 @@ const App = () => {
           id={"stage"}
         >
           <Layer ref={layerRef}>
+            <SquareWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
+
             <Transformer
               resizeEnabled={true}
               rotateEnabled={true}
