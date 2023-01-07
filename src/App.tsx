@@ -6,6 +6,7 @@ import { useRecoilState } from "recoil";
 import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 import SquareWrapper from "./components/square/SquareWrapper";
 import useCreateShapes from "./hooks/useCreateShapes";
+import TriangleWrapper from "./components/triangle/TriangleWrapper";
 
 declare global {
   interface Window {
@@ -18,7 +19,7 @@ const App = () => {
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
-  const { createRect } = useCreateShapes();
+  const { createRect, createTriangle } = useCreateShapes();
 
   const trRef = useRef<any>(null);
   const selectionRectRef = useRef<any>(null);
@@ -118,6 +119,9 @@ const App = () => {
       if (currentShape === "square") {
         createRect({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
+      if (currentShape === "triangle") {
+        createTriangle({ sx, sy, x: pos?.x!, y: pos?.y! });
+      }
 
       // setCurrentShape(null);
       // setSelectIcon(null);
@@ -204,6 +208,10 @@ const App = () => {
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />
+            <TriangleWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
 
             <Transformer
               resizeEnabled={true}
@@ -224,5 +232,4 @@ const App = () => {
     </div>
   );
 };
-
 export default App;
