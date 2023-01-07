@@ -1,9 +1,9 @@
 import React, { MouseEvent, useCallback, useRef, useState } from "react";
-import { Layer, Rect, Stage, Transformer } from "react-konva";
+import { Layer, Line, Rect, Stage, Transformer } from "react-konva";
+import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 import Konva from "konva";
 import Paint from "../src/assests/paint.svg";
 import { useRecoilState } from "recoil";
-import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 import SquareWrapper from "./components/square/SquareWrapper";
 import useCreateShapes from "./hooks/useCreateShapes";
 import TriangleWrapper from "./components/triangle/TriangleWrapper";
@@ -21,7 +21,11 @@ const App = () => {
   const layerRef = useRef<any>(null);
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const [isDrawingShape, setIsDrawingShape] = useState<boolean>(false);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
+  const [lines, setLines] = useState<any>([]);
+
   const {
     createRect,
     createTriangle,
@@ -53,9 +57,10 @@ const App = () => {
     setSelectIcon(null);
   };
 
-  const onAddIcon = (event: MouseEvent<HTMLImageElement>) => {
+  const onAddIcon = (event: MouseEvent<HTMLImageElement>, isDraw?: boolean) => {
     const src = (event.target as HTMLImageElement).src;
     setSelectIcon((prev) => (prev === src ? null : src));
+    isDraw && setIsDrawingShape((prev) => !prev);
     setCurrentShape(null);
   };
 
@@ -85,7 +90,13 @@ const App = () => {
       ]);
       return;
     }
-    if (e.target.attrs.id === "stage") {
+    if (isDrawingShape) {
+      setIsDrawing(true);
+      setLines([...lines, { points: [pos?.x, pos?.y] }]);
+      return;
+    }
+
+    if (e.target.attrs.id === "stage" && !isDrawingShape) {
       selection.current.visible = true;
       selection.current.x1 = pos?.x!;
       selection.current.y1 = pos?.y!;
@@ -96,10 +107,11 @@ const App = () => {
   };
 
   const onMouseMove = (e: Konva.KonvaEventObject<any>) => {
+    const pos = e.target.getStage()?.getPointerPosition();
+
     if (currentShape && newAnnotation.length) {
       const sx = newAnnotation[0].x;
       const sy = newAnnotation[0].y;
-      const pos = e.target.getStage()?.getPointerPosition();
 
       setNewAnnotation([
         {
@@ -112,12 +124,20 @@ const App = () => {
       ]);
       return;
     }
+    if (isDrawingShape && isDrawing) {
+      let lastLine = lines[lines.length - 1];
+      // add point
+      lastLine.points = lastLine.points.concat([pos?.x, pos?.y]);
+      // replace last
+      lines.splice(lines.length - 1, 1, lastLine);
+      setLines(lines.concat());
+      return;
+    }
 
     if (!selection.current.visible) {
       return;
     }
 
-    const pos = e.target.getStage()?.getPointerPosition();
     selection.current.x2 = pos?.x!;
     selection.current.y2 = pos?.y!;
     updateSelectionRect();
@@ -148,7 +168,13 @@ const App = () => {
       // setCurrentShape(null);
       // setSelectIcon(null);
       setNewAnnotation([]);
+      setIsDrawing(false);
+      setIsDrawingShape(false);
       return;
+    }
+
+    if (isDrawingShape) {
+      setIsDrawing(false);
     }
 
     if (!selection.current.visible) {
@@ -162,7 +188,7 @@ const App = () => {
       ...layerRef.current.find(".ellipse"),
       ...layerRef.current.find(".star"),
       ...layerRef.current.find(".roundSquare"),
-      // ...layerRef.current.find(".paint"),
+      ...layerRef.current.find(".draw"),
       // ...layerRef.current.find(".icon"),
       // ...layerRef.current.find(".arrow"),
     ].forEach((elementNode: any) => {
@@ -190,6 +216,8 @@ const App = () => {
     }
 
     setCurrentShape(null);
+    setIsDrawing(false);
+    setIsDrawingShape(false);
   }, []);
 
   return (
@@ -200,7 +228,12 @@ const App = () => {
         <button onClick={() => onAddShape("ellipse")}>Ellipse</button>
         <button onClick={() => onAddShape("star")}>Star</button>
         <button onClick={() => onAddShape("roundSquare")}>Round Square</button>
-        <img alt={"cooling"} src={Paint} width="25" onClick={onAddIcon} />
+        <img
+          alt={"cooling"}
+          src={Paint}
+          width="25"
+          onClick={(e) => onAddIcon(e, true)}
+        />
         <button onClick={() => onAddShape("arrow")}>Arrow</button>
       </div>
       <div>
@@ -216,7 +249,7 @@ const App = () => {
           style={{
             cursor: `${
               selectIcon
-                ? `url(${selectIcon}), auto`
+                ? `url(${selectIcon})  0 20, auto`
                 : currentShape
                 ? "crosshair"
                 : "auto"
@@ -226,6 +259,20 @@ const App = () => {
           id={"stage"}
         >
           <Layer ref={layerRef}>
+            {lines.map((line: any, i: any) => (
+              <Line
+                draggable
+                key={i}
+                points={line.points}
+                stroke="black"
+                strokeWidth={2}
+                tension={0.2}
+                lineCap="round"
+                lineJoin="round"
+                name="draw"
+              />
+            ))}
+
             <SquareWrapper
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
