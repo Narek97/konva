@@ -3,6 +3,7 @@ import { useRecoilState } from "recoil";
 import { squareShapeAtom } from "../store/atom/squareShape.atom";
 import { triangleShapeAtom } from "../store/atom/triangleShape.atom";
 import { ellipseShapeAtom } from "../store/atom/ellipseShape.atom";
+import { starShapeAtom } from "../store/atom/starShape.atom";
 
 interface IUseCreateShapes {
   sx: number;
@@ -16,6 +17,7 @@ const useCreateShapes = () => {
   const [triangleShape, setTriangleShapeState] =
     useRecoilState(triangleShapeAtom);
   const [ellipseShape, setEllipseShape] = useRecoilState(ellipseShapeAtom);
+  const [starShape, setStarShape] = useRecoilState(starShapeAtom);
 
   const createRect = ({ sx, sy, x, y }: IUseCreateShapes) => {
     const annotation = {
@@ -42,7 +44,7 @@ const useCreateShapes = () => {
       key: triangleShape.length + 1,
       fill: "blue",
       strokeWidth: 0,
-      id: new Date().toLocaleTimeString().toString(),
+      id: Date.now().toString(),
     };
     setTriangleShapeState([...triangleShape, annotation]);
   };
@@ -58,12 +60,26 @@ const useCreateShapes = () => {
       key: ellipseShape.length + 1,
       fill: "red",
       strokeWidth: 0,
-      id: new Date().toLocaleTimeString().toString(),
+      id: Date.now().toString(),
     };
     setEllipseShape([...ellipseShape, annotation]);
   };
 
-  return { createRect, createTriangle, createEllipse };
+  const createStar = ({ sx, sy, x, y }: IUseCreateShapes) => {
+    const annotation = {
+      x: sx,
+      y: sy,
+      width: x - sx,
+      height: y - sy,
+      key: starShape.length + 1,
+      fill: "yellow",
+      strokeWidth: 0,
+      id: Date.now().toString(),
+    };
+    setStarShape([...starShape, annotation]);
+  };
+
+  return { createRect, createTriangle, createEllipse, createStar };
 };
 
 export default useCreateShapes;

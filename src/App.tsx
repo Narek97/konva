@@ -7,7 +7,8 @@ import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 import SquareWrapper from "./components/square/SquareWrapper";
 import useCreateShapes from "./hooks/useCreateShapes";
 import TriangleWrapper from "./components/triangle/TriangleWrapper";
-import EllipseShapeWrapper from "./components/ellipse/EllipseWrapper";
+import EllipseWrapper from "./components/ellipse/EllipseWrapper";
+import StarWrapper from "./components/star/StarWrapper";
 
 declare global {
   interface Window {
@@ -20,7 +21,8 @@ const App = () => {
   const [currentShape, setCurrentShape] = useState<string | null>(null);
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
-  const { createRect, createTriangle, createEllipse } = useCreateShapes();
+  const { createRect, createTriangle, createEllipse, createStar } =
+    useCreateShapes();
 
   const trRef = useRef<any>(null);
   const selectionRectRef = useRef<any>(null);
@@ -126,6 +128,9 @@ const App = () => {
       if (currentShape === "ellipse") {
         createEllipse({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
+      if (currentShape === "star") {
+        createStar({ sx, sy, x: pos?.x!, y: pos?.y! });
+      }
 
       // setCurrentShape(null);
       // setSelectIcon(null);
@@ -216,7 +221,11 @@ const App = () => {
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />
-            <EllipseShapeWrapper
+            <EllipseWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
+            <StarWrapper
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />

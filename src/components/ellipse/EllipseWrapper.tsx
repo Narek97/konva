@@ -4,12 +4,12 @@ import { useRecoilValue } from "recoil";
 import { ellipseShapeAtom } from "../../store/atom/ellipseShape.atom";
 import EllipseShape from "./EllipseShape";
 
-interface IEllipseShapeWrapper {
+interface IEllipseWrapper {
   currentShape: string | null;
   onShapeSelect: (e: any) => void;
 }
 
-const EllipseShapeWrapper: FC<IEllipseShapeWrapper> = ({
+const EllipseWrapper: FC<IEllipseWrapper> = ({
   currentShape,
   onShapeSelect,
 }) => {
@@ -38,4 +38,4 @@ const EllipseShapeWrapper: FC<IEllipseShapeWrapper> = ({
   );
 };
 
-export default EllipseShapeWrapper;
+export default EllipseWrapper;
