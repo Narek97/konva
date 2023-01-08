@@ -20,7 +20,6 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
           x: e.target.x(),
           y: e.target.y(),
           width: shapeProps.x1 + shapeProps.x - e.target.x(),
-
           height: shapeProps.y1 + shapeProps.y - e.target.y(),
         };
       }

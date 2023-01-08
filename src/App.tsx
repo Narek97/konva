@@ -24,8 +24,9 @@ const App = () => {
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [isDrawingShape, setIsDrawingShape] = useState<boolean>(false);
-  const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
   const [lines, setLines] = useState<any>([]);
+  const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
+  // const setInstruments = useSetRecoilState(instrumentsAtom);
 
   const {
     createRect,
@@ -82,17 +83,9 @@ const App = () => {
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
 
-    // if (currentShape === "arrow" && e.target.attrs.id === "stage") {
-    //   setNewAnnotation([
-    //     {
-    //       isDrawing: true,
-    //       arrowStartPos: { x: pos?.x, y: pos?.y },
-    //       arrowEndPos: { x: pos?.x, y: pos?.y },
-    //     },
-    //   ]);
-    //   return;
-    // }
-
+    if (e.target.attrs.id === "stage") {
+      // setInstruments(false);
+    }
     if (
       currentShape &&
       !newAnnotation.length &&
@@ -121,14 +114,6 @@ const App = () => {
 
   const onMouseMove = (e: Konva.KonvaEventObject<any>) => {
     const pos = e.target.getStage()?.getPointerPosition();
-
-    // if (currentShape === "arrow" && newAnnotation[0]?.isDrawing) {
-    //   setNewAnnotation([
-    //     { ...newAnnotation[0], arrowEndPos: { x: pos?.x, y: pos?.y } },
-    //   ]);
-    //   return;
-    // }
-
     if (currentShape && newAnnotation.length) {
       const sx = newAnnotation[0].x;
       const sy = newAnnotation[0].y;
@@ -187,14 +172,6 @@ const App = () => {
       if (currentShape === "arrow") {
         createArrow({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
-      // if (currentShape === "arrow") {
-      //   createArrow({
-      //     arrowStartPos: newAnnotation[0].arrowStartPos,
-      //     arrowEndPos: newAnnotation[0].arrowEndPos,
-      //   });
-      // }
-      // setCurrentShape(null);
-      // setSelectIcon(null);
       setNewAnnotation([]);
       setIsDrawing(false);
       setIsDrawingShape(false);
