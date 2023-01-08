@@ -14,6 +14,7 @@ import ArrowWrapper from "./components/arrow/ArrowWrapper";
 import { Html } from "react-konva-utils";
 import Xarrow from "react-xarrows";
 import { connectionArrowAtom } from "./store/atom/connectionArrow.atom";
+import GroupWrapper from "./components/group/GroupWrapper";
 
 declare global {
   interface Window {
@@ -27,6 +28,7 @@ const App = () => {
   const [selectIcon, setSelectIcon] = useState<string | null>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [isDrawingShape, setIsDrawingShape] = useState<boolean>(false);
+  const [isGroupTransformer, setIsGroupTransformer] = useState(false);
   const [lines, setLines] = useState<any>([]);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
   const arrows = useRecoilValue(connectionArrowAtom);
@@ -38,6 +40,7 @@ const App = () => {
     createStar,
     createRoundRect,
     createArrow,
+    createGroup,
   } = useCreateShapes();
 
   const trRef = useRef<any>(null);
@@ -81,6 +84,29 @@ const App = () => {
       fill: "rgba(0, 161, 255, 0.3)",
     });
     node.getLayer().batchDraw();
+  };
+
+  const groupTransformer = (selBox: any) => {
+    const elements: any = [];
+    [
+      ...layerRef.current.find(".square"),
+      ...layerRef.current.find(".triangle"),
+      ...layerRef.current.find(".ellipse"),
+      ...layerRef.current.find(".star"),
+      ...layerRef.current.find(".roundSquare"),
+      ...layerRef.current.find(".draw"),
+      ...layerRef.current.find(".group"),
+      // ...layerRef.current.find(".icon"),
+      // ...layerRef.current.find(".arrow"),
+    ].forEach((elementNode: any) => {
+      const elBox = elementNode.getClientRect();
+      if (Konva.Util.haveIntersection(selBox, elBox)) {
+        elements.push(elementNode);
+      }
+    });
+    trRef.current.nodes(elements);
+    selection.current.visible = false;
+    updateSelectionRect();
   };
 
   const onMouseDown = (e: Konva.KonvaEventObject<any>) => {
@@ -171,10 +197,13 @@ const App = () => {
       if (currentShape === "roundSquare") {
         createRoundRect({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
-
       if (currentShape === "arrow") {
         createArrow({ sx, sy, x: pos?.x!, y: pos?.y! });
       }
+      if (currentShape === "group") {
+        createGroup({ sx, sy, x: pos?.x!, y: pos?.y! });
+      }
+
       setNewAnnotation([]);
       setIsDrawing(false);
       setIsDrawingShape(false);
@@ -189,25 +218,7 @@ const App = () => {
       return;
     }
     const selBox = selectionRectRef.current.getClientRect();
-    const elements: any = [];
-    [
-      ...layerRef.current.find(".square"),
-      ...layerRef.current.find(".triangle"),
-      ...layerRef.current.find(".ellipse"),
-      ...layerRef.current.find(".star"),
-      ...layerRef.current.find(".roundSquare"),
-      ...layerRef.current.find(".draw"),
-      // ...layerRef.current.find(".icon"),
-      // ...layerRef.current.find(".arrow"),
-    ].forEach((elementNode: any) => {
-      const elBox = elementNode.getClientRect();
-      if (Konva.Util.haveIntersection(selBox, elBox)) {
-        elements.push(elementNode);
-      }
-    });
-    trRef.current.nodes(elements);
-    selection.current.visible = false;
-    updateSelectionRect();
+    groupTransformer(selBox);
   };
 
   const onTouchStart = (e: Konva.KonvaEventObject<any>) => {
@@ -217,16 +228,30 @@ const App = () => {
     }
   };
 
-  const onShapeSelect = useCallback((e: any) => {
-    if (e.current) {
-      trRef.current.nodes([e.current]);
-      trRef.current.getLayer().batchDraw();
-    }
+  const onShapeSelect = useCallback(
+    (e: any) => {
+      if (e?.current) {
+        if (e.current.name() === "group") {
+          setIsGroupTransformer(true);
+          const selBox = e.current.getClientRect();
+          groupTransformer(selBox);
+        } else {
+          setIsGroupTransformer(false);
+          if (e.current) {
+            trRef.current.nodes([e.current]);
+            trRef.current.getLayer().batchDraw();
+          }
+        }
+      } else {
+        trRef.current.nodes([]);
+      }
 
-    setCurrentShape(null);
-    setIsDrawing(false);
-    setIsDrawingShape(false);
-  }, []);
+      setCurrentShape(null);
+      setIsDrawing(false);
+      setIsDrawingShape(false);
+    },
+    [groupTransformer]
+  );
 
   return (
     <div className={"app"}>
@@ -237,6 +262,8 @@ const App = () => {
         <button onClick={() => onAddShape("star")}>Star</button>
         <button onClick={() => onAddShape("roundSquare")}>Round Square</button>
         <button onClick={() => onAddShape("arrow")}>Arrow</button>
+        <button onClick={() => onAddShape("group")}>Group</button>
+
         <img
           alt={"cooling"}
           src={Paint}
@@ -281,6 +308,11 @@ const App = () => {
               />
             ))}
 
+            <GroupWrapper
+              currentShape={currentShape}
+              onShapeSelect={onShapeSelect}
+            />
+
             <SquareWrapper
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
@@ -317,8 +349,9 @@ const App = () => {
             </Html>
 
             <Transformer
-              resizeEnabled={true}
-              rotateEnabled={true}
+              resizeEnabled={!isGroupTransformer}
+              rotateEnabled={!isGroupTransformer}
+              borderStrokeWidth={isGroupTransformer ? 0 : 1}
               ref={trRef}
               boundBoxFunc={(oldBox, newBox) => {
                 if (newBox.width < 30 || newBox.height < 30) {

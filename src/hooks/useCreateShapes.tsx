@@ -6,17 +6,13 @@ import { ellipseShapeAtom } from "../store/atom/ellipseShape.atom";
 import { starShapeAtom } from "../store/atom/starShape.atom";
 import { roundSquareShapeAtom } from "../store/atom/roundSquareShape.atom";
 import { arrowShapeAtom } from "../store/atom/arrowShape.atom";
+import { groupShapeAtom } from "../store/atom/groupShape.atom";
 
 interface IUseCreateShapes {
   sx: number;
   sy: number;
   x: number;
   y: number;
-}
-
-interface IUseCreateArrowShapes {
-  arrowStartPos: any;
-  arrowEndPos: any;
 }
 
 const useCreateShapes = () => {
@@ -27,6 +23,7 @@ const useCreateShapes = () => {
   const [starShape, setStarShape] = useRecoilState(starShapeAtom);
   const [roundSquare, setRoundSquare] = useRecoilState(roundSquareShapeAtom);
   const [arrowSquare, setArrowSquare] = useRecoilState(arrowShapeAtom);
+  const [groupSquare, setGroupSquare] = useRecoilState(groupShapeAtom);
 
   const createRect = ({ sx, sy, x, y }: IUseCreateShapes) => {
     const annotation = {
@@ -122,6 +119,21 @@ const useCreateShapes = () => {
     setArrowSquare([...arrowSquare, annotation]);
   };
 
+  const createGroup = ({ sx, sy, x, y }: IUseCreateShapes) => {
+    const annotation = {
+      x: sx,
+      y: sy,
+      width: x - sx,
+      height: y - sy,
+      key: groupSquare.length + 1,
+      fill: "green",
+      strokeWidth: 0,
+      id: Date.now().toString(),
+      groupItems: [],
+    };
+    setGroupSquare([...groupSquare, annotation]);
+  };
+
   // const createArrow = ({
   //   arrowStartPos,
   //   arrowEndPos,
@@ -141,6 +153,7 @@ const useCreateShapes = () => {
     createStar,
     createRoundRect,
     createArrow,
+    createGroup,
   };
 };
 
