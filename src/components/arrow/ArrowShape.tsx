@@ -62,7 +62,7 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
       <Arrow
         onClick={onSelect}
         onTap={onSelect}
-        onMouseDown={() => setIsShowCircle(true)}
+        onMouseDown={() => setIsShowCircle((prev) => !prev)}
         {...shapeProps}
         onDragMove={onArrowDrag}
         pointerLength={20}

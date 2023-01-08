@@ -1,25 +1,23 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import ConnectPointsWrapper from "./ConnectPointsWrapper";
 
-const Box = ({ shapeProps }: any) => {
+const Box = ({
+  shapeProps,
+  setArrows,
+  arrows,
+  setCurrentZIndex,
+  showInstruments,
+}: any) => {
   const ref0 = useRef<any>();
-  return (
-    <div
-      className={"aa"}
-      id={shapeProps.id}
+  const [visibility, setVisibility] = useState(true);
+  const addArrow = ({ start, end }: any) => {
+    setArrows([...arrows, { start, end }]);
+  };
 
-      // onDragOver={(e) => e.preventDefault()}
-      // onDrop={(e) => {
-      //   if (e.dataTransfer.getData("arrow") === boxId) {
-      //     console.log(e.dataTransfer.getData("arrow"), boxId);
-      //   } else {
-      //     const refs = { start: e.dataTransfer.getData("arrow"), end: boxId };
-      //     addArrow(refs);
-      //     console.log("droped!", refs);
-      //   }
-      // }}
-    >
+  return (
+    <>
       <div
+        id={shapeProps.id}
         style={{
           position: "relative",
           width: shapeProps.width,
@@ -27,43 +25,66 @@ const Box = ({ shapeProps }: any) => {
           left: shapeProps.x,
           top: shapeProps.y,
           backgroundColor: "red",
-          visibility: "hidden",
+          visibility: visibility ? "visible" : "hidden",
         }}
+        onMouseMove={() => setVisibility(false)}
+        onMouseLeave={() => setVisibility(true)}
         ref={ref0}
-      />
-      <ConnectPointsWrapper
-        {...{
-          boxId: shapeProps.id,
-          ref0,
-          left: shapeProps.x - 20,
-          top: shapeProps.y + shapeProps.height / 2 - 5,
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          if (e.dataTransfer.getData("arrow") === shapeProps.id) {
+            console.log(e.dataTransfer.getData("arrow"), shapeProps.id);
+          } else {
+            const refs = {
+              start: e.dataTransfer.getData("arrow"),
+              end: shapeProps.id,
+            };
+            addArrow(refs);
+          }
         }}
       />
-      <ConnectPointsWrapper
-        {...{
-          boxId: shapeProps.id,
-          ref0,
-          left: shapeProps.x + shapeProps.width + 10,
-          top: shapeProps.y + shapeProps.height / 2 - 5,
-        }}
-      />
-      <ConnectPointsWrapper
-        {...{
-          boxId: shapeProps.id,
-          ref0,
-          left: shapeProps.x + shapeProps.width / 2 - 5,
-          top: shapeProps.y - 20,
-        }}
-      />
-      <ConnectPointsWrapper
-        {...{
-          boxId: shapeProps.id,
-          ref0,
-          left: shapeProps.x + shapeProps.width / 2 - 5,
-          top: shapeProps.y + +shapeProps.height + 10,
-        }}
-      />
-    </div>
+
+      {showInstruments && (
+        <>
+          <ConnectPointsWrapper
+            {...{
+              boxId: shapeProps.id,
+              ref0,
+              left: shapeProps.x - 20,
+              top: shapeProps.y + shapeProps.height / 2 - 5,
+              setCurrentZIndex,
+            }}
+          />
+          <ConnectPointsWrapper
+            {...{
+              boxId: shapeProps.id,
+              ref0,
+              left: shapeProps.x + shapeProps.width + 10,
+              top: shapeProps.y + shapeProps.height / 2 - 5,
+              setCurrentZIndex,
+            }}
+          />
+          <ConnectPointsWrapper
+            {...{
+              boxId: shapeProps.id,
+              ref0,
+              left: shapeProps.x + shapeProps.width / 2 - 5,
+              top: shapeProps.y - 20,
+              setCurrentZIndex,
+            }}
+          />
+          <ConnectPointsWrapper
+            {...{
+              boxId: shapeProps.id,
+              ref0,
+              left: shapeProps.x + shapeProps.width / 2 - 5,
+              top: shapeProps.y + +shapeProps.height + 10,
+              setCurrentZIndex,
+            }}
+          />
+        </>
+      )}
+    </>
   );
 };
 

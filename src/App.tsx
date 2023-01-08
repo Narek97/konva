@@ -3,7 +3,7 @@ import { Layer, Line, Rect, Stage, Transformer } from "react-konva";
 import { newAnnotationAtom } from "./store/atom/newAnnotation.atom";
 import Konva from "konva";
 import Paint from "../src/assests/paint.svg";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import SquareWrapper from "./components/square/SquareWrapper";
 import useCreateShapes from "./hooks/useCreateShapes";
 import TriangleWrapper from "./components/triangle/TriangleWrapper";
@@ -11,6 +11,9 @@ import EllipseWrapper from "./components/ellipse/EllipseWrapper";
 import StarWrapper from "./components/star/StarWrapper";
 import RoundSquareWrapper from "./components/roundSquare/roundSquareWrapper";
 import ArrowWrapper from "./components/arrow/ArrowWrapper";
+import { Html } from "react-konva-utils";
+import Xarrow from "react-xarrows";
+import { connectionArrowAtom } from "./store/atom/connectionArrow.atom";
 
 declare global {
   interface Window {
@@ -26,7 +29,7 @@ const App = () => {
   const [isDrawingShape, setIsDrawingShape] = useState<boolean>(false);
   const [lines, setLines] = useState<any>([]);
   const [newAnnotation, setNewAnnotation] = useRecoilState(newAnnotationAtom);
-  // const setInstruments = useSetRecoilState(instrumentsAtom);
+  const arrows = useRecoilValue(connectionArrowAtom);
 
   const {
     createRect,
@@ -302,6 +305,16 @@ const App = () => {
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />
+
+            <Html>
+              {arrows.map((ar: any) => (
+                <Xarrow
+                  start={ar.start}
+                  end={ar.end}
+                  key={ar.start + "-." + ar.start}
+                />
+              ))}
+            </Html>
 
             <Transformer
               resizeEnabled={true}

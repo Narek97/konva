@@ -16,7 +16,14 @@ const connectPointStyle: any = {
 //   bottom: { left: "50%", top: "104%", transform: "translate(-50%, -50%)" },
 // };
 
-const ConnectPointsWrapper = ({ boxId, handler, ref0, left, top }: any) => {
+const ConnectPointsWrapper = ({
+  boxId,
+  handler,
+  ref0,
+  left,
+  top,
+  setCurrentZIndex,
+}: any) => {
   const ref1 = useRef<any>();
 
   const [position, setPosition] = useState({});
@@ -35,12 +42,11 @@ const ConnectPointsWrapper = ({ boxId, handler, ref0, left, top }: any) => {
         }}
         draggable
         onDragStart={(e) => {
+          setCurrentZIndex(0);
           setBeingDragged(true);
           e.dataTransfer.setData("arrow", boxId);
         }}
         onDrag={(e) => {
-          console.log(e.clientX, "x");
-          console.log(e.clientY, "y");
           setPosition({
             position: "fixed",
             left: e.clientX - 25,
@@ -51,8 +57,9 @@ const ConnectPointsWrapper = ({ boxId, handler, ref0, left, top }: any) => {
         }}
         ref={ref1}
         onDragEnd={(e) => {
+          setCurrentZIndex(10);
           setPosition({});
-          // e.dataTransfer.setData("arrow", null);
+          e.dataTransfer.setData("arrow", "");
           setBeingDragged(false);
         }}
       />

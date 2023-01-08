@@ -28,3 +28,11 @@
 .draw {
   cursor: url("/src/assests/paint.svg") 0 20, auto;
 }
+
+.aa{
+  visibility: visible;
+}
+
+.aa:hover{
+  visibility: hidden;
+}
