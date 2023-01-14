@@ -34,8 +34,8 @@ const GroupShape: FC<IGroupShape> = ({ onSelect, shapeProps }) => {
         ref={shapeRef}
         draggable
         onDragMove={onDragMove}
-        onMouseMove={() => onSelect(shapeRef)}
-        onMouseLeave={() => onSelect(null)}
+        onMouseMove={() => shapeProps.id && onSelect(shapeRef)}
+        onMouseLeave={() => shapeProps.id && onSelect(null)}
         onClick={() => onSelect(shapeRef)}
         onTap={() => onSelect(shapeRef)}
         name="group"

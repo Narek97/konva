@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import ConnectPointsWrapper from "./ConnectPointsWrapper";
 
 const Box = ({
@@ -7,28 +7,28 @@ const Box = ({
   arrows,
   setCurrentZIndex,
   showInstruments,
+  connectionArrowStart,
+  setConnectionArrowStart,
 }: any) => {
   const ref0 = useRef<any>();
-  const [visibility, setVisibility] = useState(true);
+
   const addArrow = ({ start, end }: any) => {
     setArrows([...arrows, { start, end }]);
   };
 
   return (
-    <>
+    <div className={"parent"}>
       <div
         id={shapeProps.id}
+        className={"child"}
         style={{
           position: "relative",
           width: shapeProps.width,
           height: shapeProps.height,
           left: shapeProps.x,
           top: shapeProps.y,
-          backgroundColor: "red",
-          visibility: visibility ? "visible" : "hidden",
+          visibility: connectionArrowStart ? "visible" : "hidden",
         }}
-        onMouseMove={() => setVisibility(false)}
-        onMouseLeave={() => setVisibility(true)}
         ref={ref0}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
@@ -53,6 +53,7 @@ const Box = ({
               left: shapeProps.x - 20,
               top: shapeProps.y + shapeProps.height / 2 - 5,
               setCurrentZIndex,
+              setConnectionArrowStart,
             }}
           />
           <ConnectPointsWrapper
@@ -62,6 +63,7 @@ const Box = ({
               left: shapeProps.x + shapeProps.width + 10,
               top: shapeProps.y + shapeProps.height / 2 - 5,
               setCurrentZIndex,
+              setConnectionArrowStart,
             }}
           />
           <ConnectPointsWrapper
@@ -71,6 +73,7 @@ const Box = ({
               left: shapeProps.x + shapeProps.width / 2 - 5,
               top: shapeProps.y - 20,
               setCurrentZIndex,
+              setConnectionArrowStart,
             }}
           />
           <ConnectPointsWrapper
@@ -80,11 +83,12 @@ const Box = ({
               left: shapeProps.x + shapeProps.width / 2 - 5,
               top: shapeProps.y + +shapeProps.height + 10,
               setCurrentZIndex,
+              setConnectionArrowStart,
             }}
           />
         </>
       )}
-    </>
+    </div>
   );
 };
 

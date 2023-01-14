@@ -1,9 +1,13 @@
-import React, { FC, useRef } from "react";
+import React, { FC, useRef, useState } from "react";
 import { KonvaNodeComponent, Rect } from "react-konva";
 import Konva from "konva";
 import TRect = Konva.Rect;
 import { useRecoilState } from "recoil";
 import { squareShapeAtom } from "../../store/atom/squareShape.atom";
+import { Html } from "react-konva-utils";
+import { connectionArrowAtom } from "../../store/atom/connectionArrow.atom";
+import Box from "../ConnectPoints/Box";
+import { connectionArrowStartAtom } from "../../store/atom/connectionArrowStart.atom";
 
 interface ISquareShape {
   shapeProps: any;
@@ -12,10 +16,14 @@ interface ISquareShape {
 
 const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
   const shapeRef = useRef<KonvaNodeComponent<TRect>>(null);
-  // const [currentZIndex, setCurrentZIndex] = useState(10);
-  // const [showInstruments, setShowInstruments] = useState(false);
-  // const [arrows, setArrows] = useRecoilState(connectionArrowAtom);
+  const [currentZIndex, setCurrentZIndex] = useState(10);
+  const [showInstruments, setShowInstruments] = useState(false);
+  const [isMouseMove, setIsMouseMove] = useState(false);
+  const [arrows, setArrows] = useRecoilState(connectionArrowAtom);
   const [squareShape, setSquareShape] = useRecoilState(squareShapeAtom);
+  const [connectionArrowStart, setConnectionArrowStart] = useRecoilState(
+    connectionArrowStartAtom
+  );
 
   const onDragMove = (e: any) => {
     let newSquareShapes = squareShape.map((item: any) => {
@@ -29,11 +37,11 @@ const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
       return item;
     });
     setSquareShape(newSquareShapes);
+    setIsMouseMove(true);
   };
-
-  // const onMouseDown = () => {
-  //   setShowInstruments((prev) => !prev);
-  // };
+  const onMouseUp = () => {
+    isMouseMove ? setIsMouseMove(false) : setShowInstruments((prev) => !prev);
+  };
 
   return (
     <>
@@ -46,7 +54,7 @@ const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
         dash={[10, 10]}
         name="square"
         draggable
-        // onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
         onDragMove={onDragMove}
 
         // onTransformEnd={(e) => {
@@ -67,21 +75,25 @@ const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
         // }}
       />
 
-      {/*<Html*/}
-      {/*  divProps={{*/}
-      {/*    style: {*/}
-      {/*      zIndex: currentZIndex,*/}
-      {/*    },*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  <Box*/}
-      {/*    shapeProps={shapeProps}*/}
-      {/*    setArrows={setArrows}*/}
-      {/*    arrows={arrows}*/}
-      {/*    showInstruments={showInstruments}*/}
-      {/*    setCurrentZIndex={setCurrentZIndex}*/}
-      {/*  />*/}
-      {/*</Html>*/}
+      <Html
+        divProps={{
+          style: {
+            zIndex: currentZIndex + 20,
+            width: 0,
+            height: 0,
+          },
+        }}
+      >
+        <Box
+          shapeProps={shapeProps}
+          setArrows={setArrows}
+          arrows={arrows}
+          showInstruments={showInstruments}
+          setCurrentZIndex={setCurrentZIndex}
+          connectionArrowStart={connectionArrowStart}
+          setConnectionArrowStart={setConnectionArrowStart}
+        />
+      </Html>
     </>
   );
 };

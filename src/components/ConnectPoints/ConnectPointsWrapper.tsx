@@ -1,5 +1,7 @@
 import React, { useRef, useState } from "react";
 import Xarrow from "react-xarrows";
+import {connectionArrowStartAtom} from "../../store/atom/connectionArrowStart.atom";
+import {useSetRecoilState} from "recoil";
 
 const connectPointStyle: any = {
   position: "absolute",
@@ -23,6 +25,7 @@ const ConnectPointsWrapper = ({
   left,
   top,
   setCurrentZIndex,
+                                  setConnectionArrowStart
 }: any) => {
   const ref1 = useRef<any>();
 
@@ -42,6 +45,7 @@ const ConnectPointsWrapper = ({
         }}
         draggable
         onDragStart={(e) => {
+          setConnectionArrowStart(true)
           setCurrentZIndex(0);
           setBeingDragged(true);
           e.dataTransfer.setData("arrow", boxId);
@@ -57,6 +61,7 @@ const ConnectPointsWrapper = ({
         }}
         ref={ref1}
         onDragEnd={(e) => {
+          setConnectionArrowStart(false)
           setCurrentZIndex(10);
           setPosition({});
           e.dataTransfer.setData("arrow", "");

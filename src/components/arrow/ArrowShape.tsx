@@ -68,6 +68,7 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
         pointerLength={20}
         pointerWidth={20}
         curved
+        tension={0.8}
         lineCap="square"
         lineJoin="round"
         fill="black"

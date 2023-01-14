@@ -29,10 +29,14 @@
   cursor: url("/src/assests/paint.svg") 0 20, auto;
 }
 
-.aa{
+.aa {
   visibility: visible;
 }
 
-.aa:hover{
+/*.aa:hover{*/
+/*  visibility: hidden;*/
+/*}*/
+
+.child:hover {
   visibility: hidden;
 }
