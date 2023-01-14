@@ -67,9 +67,9 @@ const ArrowShape: FC<IArrowShape> = ({ onSelect, shapeProps }) => {
         onDragMove={onArrowDrag}
         pointerLength={20}
         pointerWidth={20}
-        curved
-        tension={0.8}
-        lineCap="square"
+        // curved
+        tension={0.3}
+        lineCap="round"
         lineJoin="round"
         fill="black"
         stroke="black"
