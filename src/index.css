@@ -24,6 +24,9 @@
   margin-bottom: 10px;
 }
 
+.body{
+  overflow: hidden;
+}
 
 .draw {
   cursor: url("/src/assests/paint.svg") 0 20, auto;

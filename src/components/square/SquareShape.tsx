@@ -8,6 +8,7 @@ import { Html } from "react-konva-utils";
 import { connectionArrowAtom } from "../../store/atom/connectionArrow.atom";
 import Box from "../ConnectPoints/Box";
 import { connectionArrowStartAtom } from "../../store/atom/connectionArrowStart.atom";
+import SquareInstruments from "./SquareInstruments";
 
 interface ISquareShape {
   shapeProps: any;
@@ -45,6 +46,19 @@ const SquareShape: FC<ISquareShape> = ({ onSelect, shapeProps }) => {
 
   return (
     <>
+      {showInstruments && (
+        <Html
+          divProps={{
+            style: {
+              width: 0,
+              height: 0,
+            },
+          }}
+        >
+          <SquareInstruments shapeProps={shapeProps} />
+        </Html>
+      )}
+
       <Rect
         onClick={() => onSelect(shapeRef)}
         onTap={() => onSelect(shapeRef)}

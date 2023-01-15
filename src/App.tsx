@@ -272,7 +272,7 @@ const App = () => {
           onClick={(e) => onAddIcon(e, true)}
         />
       </div>
-      <div>
+      <div className={"body"}>
         <Stage
           width={window.innerWidth - 40}
           height={window.innerHeight - 140}
