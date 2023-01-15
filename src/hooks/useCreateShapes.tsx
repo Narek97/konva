@@ -1,4 +1,3 @@
-import React from "react";
 import { useRecoilState } from "recoil";
 import { squareShapeAtom } from "../store/atom/squareShape.atom";
 import { triangleShapeAtom } from "../store/atom/triangleShape.atom";
@@ -108,14 +107,19 @@ const useCreateShapes = () => {
     const annotation = {
       x: sx,
       y: sy,
+      mpx: x,
+      mpy: y,
       width: x - sx,
       height: y - sy,
-      // points: [0, 0, x - sx, y - sy],
+      midX: 0,
+      midY: 0,
       key: arrowSquare.length + 1,
       fill: "blue",
       strokeWidth: 0,
+      pointer: true,
       id: Date.now().toString(),
     };
+
     setArrowSquare([...arrowSquare, annotation]);
   };
 

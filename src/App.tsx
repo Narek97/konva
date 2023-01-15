@@ -15,6 +15,7 @@ import { Html } from "react-konva-utils";
 import Xarrow from "react-xarrows";
 import { connectionArrowAtom } from "./store/atom/connectionArrow.atom";
 import GroupWrapper from "./components/group/GroupWrapper";
+import SpiralArrowWrapper from "./components/arrow/SpiralArrowsWrapper";
 
 declare global {
   interface Window {
@@ -337,6 +338,8 @@ const App = () => {
               currentShape={currentShape}
               onShapeSelect={onShapeSelect}
             />
+
+            <SpiralArrowWrapper />
 
             <Html>
               {arrows.map((ar: any) => (

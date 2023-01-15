@@ -16,12 +16,13 @@ const ArrowWrapper: FC<IArrowWrapper> = ({ currentShape, onShapeSelect }) => {
     currentShape === "arrow" ? [...annotation, ...arrowShape] : arrowShape;
 
   const getPoints = (arrow: any) => {
-    console.log(arrow);
     const type = () => {
       return Math.abs(arrow.width) < Math.abs(arrow.height) ? 1 : 2;
     };
     const indexY = arrow.height > 0 ? 1 : -1;
+
     const indexX = arrow.width > 0 ? 1 : 1;
+
     const points: any = {
       1: [
         0,
@@ -44,6 +45,7 @@ const ArrowWrapper: FC<IArrowWrapper> = ({ currentShape, onShapeSelect }) => {
         arrow.height,
       ],
     };
+
     return points[type()];
   };
 
@@ -59,7 +61,20 @@ const ArrowWrapper: FC<IArrowWrapper> = ({ currentShape, onShapeSelect }) => {
             y: arrow.y,
             x1: arrow.width,
             y1: arrow.height,
-            points: getPoints(arrow),
+            midX: arrow.midX,
+            midY: arrow.midY,
+            mpx: arrow.mpx,
+            mpy: arrow.mpy,
+            pointer: arrow.pointer,
+            points: [
+              0,
+              0,
+              arrow.midX || 0,
+              arrow.midY || 0,
+              arrow.width,
+              arrow.height,
+            ],
+            // points: getPoints(arrow),
             // closed: true,
             stroke: "black",
           }}
